@@ -1,6 +1,7 @@
 import java.util.Scanner;
 
 public class main {
+	
 	public static void main()
 	{
 		/* Variables */
@@ -10,15 +11,18 @@ public class main {
 		
 		/* Programme */
 		
-		/*Demander l'entier n à facto */
-		System.out.println("--- Calcul de fact(n)---\n   Veuillez saisir un entier n: ");
-		Scanner varSc = new Scanner(System.in);
-		
-		while (n>0)
-		{
-			SenderTCP
-			ReceiverTCP
-		}
+		/* Demander un entier à l'utilisateur
+		 * @param aucun paramètre
+	     * @return L'entier entré par l'utilisateur
+	     */
+	    static int demanderNombre() {
+	        int n;
+	        do {
+	            System.out.println("Donnez un nombre entier N: ");
+	            N = scanner.nextInt();
+	            return N;
+	    }
+	        
 		
 		
 	}
