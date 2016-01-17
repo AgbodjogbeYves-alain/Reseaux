@@ -31,10 +31,16 @@ class Server {
          PrintWriter out = new PrintWriter(skt.getOutputStream(), true);
          System.out.print("Sending string: '" + data + "'\n");
          System.out.print("Sending string: '" + data + "'\n");
+         if (skt.getInputStream().read()>0)
+         {
+        	 Client cli = new Client();
+        	 
+         }
          out.print(data);
          out.close();
          skt.close();
          srvr.close();
+         
       }
       catch(Exception e) {
          System.out.print("Whoops! It didn't work!\n");

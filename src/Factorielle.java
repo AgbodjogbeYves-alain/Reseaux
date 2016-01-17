@@ -24,7 +24,7 @@ class Factorielle {
     static int demanderNombre() {
         int n;
         do {
-            System.out.println("Donnez un nombre entier compris entre 0 et 12 (compris)");
+            System.out.println("Donnez un nombre entier compris entre 0 et 12 (compris)\n");
             n = scanner.nextInt();
         } while ((n > 12) || (n < 0));
         return n;
