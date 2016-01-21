@@ -4,32 +4,24 @@ import java.net.*;
 
 class Client {
 	
-   public static void main(String args[]) {
-	  //while(true){
-	   try {
-    	 int N;			//AJOUT MATHIEU
-    	 int FactN; 	//AJOUT MATHIEU
-         Socket skt = new Socket("localhost", 5001);
-         BufferedReader in = new BufferedReader(new
-            InputStreamReader(skt.getInputStream()));
-         System.out.print("Message reçu: ");
+   
+public Client(int i, int localPort) {
+		// TODO Auto-generated constructor stub
+	}
 
-         while (!in.ready()) {}
-         System.out.println(in.readLine()); // Read one line and output it
+public void setResult(int i) {
+	// TODO Auto-generated method stub
+	
+}
 
-         System.out.print("'\n");
-         while(true)
-         {
-         N = Factorielle.demanderNombre();				//AJOUT MATHIEU
-         FactN = Factorielle.factorielleRecursive(N);	//AJOUT MATHIEU
-         System.out.print(FactN + "\n");						//AJOUT MATHIEU
-         in.close();
-         }
-         
-       }
-      catch(Exception e) {
-         System.out.print("Whoops! It didn't work!\n");
-      	}
-	  }
+public int getResult() {
+	// TODO Auto-generated method stub
+	return 0;
+}
+
+public void clientRun() {
+	// TODO Auto-generated method stub
+	
+}
    }
 //}
