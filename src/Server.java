@@ -26,7 +26,7 @@ public class Server {
 	 *            le socket du serveur.
 	 */
 	Server(ServerSocket serverSocket) {
-		this.serverSocket = serverSocket;
+		Server.serverSocket = serverSocket;
 	}
 
 	/**
@@ -38,7 +38,8 @@ public class Server {
 		private InputStream inputStream;
 		private OutputStream outputStream;
 		private ArrayList<Integer> cache;
-
+		
+		
 		/**
 		 * Constructeur du clientThread
 		 * 
@@ -63,7 +64,7 @@ public class Server {
 		 * demander au serveur le resultat suivant.
 		 */
 		@Override
-		public void run() {
+		public synchronized void run() {
 			Scanner sc = new Scanner(inputStream);
 			String text = "bonjour";
 			if (sc.hasNext()) { // s'il y a un suivant
@@ -76,19 +77,21 @@ public class Server {
 				printWrite.println(1);
 			} else {
 					
-					if (cache.get(compteur) == null)
-				{
-					Client client = new Client(compteur - 1, serverSocket.getLocalPort());
-					client.clientRun();
-					int result = client.getResult();
-					client.setResult(result * compteur);
-					cache.add(compteur-1,result);
-					printWrite.println(result * compteur);
-				} else {// On renvoie le resultat stocke si ce n'est pas le cas.
-					printWrite.println(cache.get(compteur));
-				}
-
-			}
+				
+					
+					if (cache.get(compteur) == (Integer) null)
+					{
+						Client client = new Client(compteur - 1, serverSocket.getLocalPort());
+						client.clientRun();
+						int result = client.getResult();
+						client.setResult(result * compteur);
+						cache.add(compteur-1,result);
+						printWrite.println(result * compteur);
+					} else {// On renvoie le resultat stocke si ce n'est pas le cas.
+						printWrite.println(cache.get(compteur));
+						}
+					}
+			
 			printWrite.flush();
 			try {
 				this.socketClientThread.close();
@@ -101,6 +104,7 @@ public class Server {
 	}
 
 	public static void main(String[] args) {
+		
 		try {// Un nouveau serveur avec comme parametre le port donne lors de la
 				// commande.
 			serverSocket = new ServerSocket(Integer.parseInt(args[0]));

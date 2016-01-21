@@ -7,7 +7,8 @@ class Client {
 	
 	
 	private int result;
-	private int localport;
+	private int localport = 50000;
+	@SuppressWarnings("unused")
 	private int compteur;
 	/**
 	 * Constructeur du client.
@@ -22,7 +23,7 @@ class Client {
 	public Client(int x, int localPort) {
 		this.compteur = x;
 		this.result = 1;
-		this.localport = localport;
+		this.localport = localPort;
 		
 		}
 
@@ -36,10 +37,11 @@ class Client {
 		return this.result;
 	}
 
-	public static void main(String[] args) {// On recupere les arguments de la
+	public static void main(String[] args) throws IOException {// On recupere les arguments de la
 		// console pour creer le client, on
 		// le lance puis on affiche le
 		// resultat.
+
 		Client client = new Client(Integer.parseInt(args[0]), Integer.parseInt(args[1]));
 		client.clientRun();
 		System.out.println(client.getResult());
@@ -47,7 +49,8 @@ class Client {
 	public void clientRun() {
 		// TODO Auto-generated method stub
 			try {
-				Socket clientSocket = new Socket(InetAddress.getLocalHost(), this.localport);
+				 InetAddress address = InetAddress.getLocalHost();
+				Socket clientSocket = new Socket(address, this.localport);
 				PrintStream output = new PrintStream(clientSocket.getOutputStream());
 				String text = Integer.toString(this.result);
 				Scanner sc = new Scanner(clientSocket.getInputStream());
