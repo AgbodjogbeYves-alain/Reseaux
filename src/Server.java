@@ -7,6 +7,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -17,7 +18,7 @@ import java.util.Scanner;
  * 
  */
 public class Server {
-	private static ServerSocket serverSocket;
+	private ServerSocket serverSocket;
 
 	/**
 	 * Constructeur du serveur
@@ -26,7 +27,7 @@ public class Server {
 	 *            le socket du serveur.
 	 */
 	Server(ServerSocket serverSocket) {
-		Server.serverSocket = serverSocket;
+		this.serverSocket = serverSocket;
 	}
 
 	/**
@@ -37,7 +38,8 @@ public class Server {
 		private Socket socketClientThread;
 		private InputStream inputStream;
 		private OutputStream outputStream;
-		private ArrayList<Integer> cache;
+		int[] cache;
+		
 		
 		
 		/**
@@ -49,12 +51,12 @@ public class Server {
 		 *            la Hashtable pour rentrer les résultats au fur et a
 		 *            mesure.
 		 */
-		ClientThread(Socket skt, ArrayList<Integer> cacheClient) {
+		ClientThread(Socket skt, int[] cache2) {
 			try {
 				this.socketClientThread = skt;
-				this.outputStream = skt.getOutputStream();
-				this.inputStream = skt.getInputStream();
-				this.cache = cacheClient;
+				outputStream = skt.getOutputStream();
+				inputStream = skt.getInputStream();
+				cache = cache2;
 			} catch (Exception e) {
 			}
 		}
@@ -64,7 +66,7 @@ public class Server {
 		 * demander au serveur le resultat suivant.
 		 */
 		@Override
-		public synchronized void run() {
+		public void run() {
 			Scanner sc = new Scanner(inputStream);
 			String text = "bonjour";
 			if (sc.hasNext()) { // s'il y a un suivant
@@ -75,23 +77,20 @@ public class Server {
 			if (compteur == 0) { // Si on arrive a zero, on renvoie le
 									// resultat.
 				printWrite.println(1);
-			} else {
-					
-				
-					
-					if (cache.get(compteur) == (Integer) null)
+			} else {	
+					if (cache[compteur] == 0)
 					{
 						Client client = new Client(compteur - 1, serverSocket.getLocalPort());
 						client.clientRun();
 						int result = client.getResult();
 						client.setResult(result * compteur);
-						cache.add(compteur-1,result);
+						cache[compteur-1] = result ;
 						printWrite.println(result * compteur);
 					} else {// On renvoie le resultat stocke si ce n'est pas le cas.
-						printWrite.println(cache.get(compteur));
+						//printWrite.println(cache.get(compteur));
+						printWrite.println(cache[compteur]);
 						}
 					}
-			
 			printWrite.flush();
 			try {
 				this.socketClientThread.close();
@@ -104,12 +103,12 @@ public class Server {
 	}
 
 	public static void main(String[] args) {
-		
+		ServerSocket serverSocket = null;
 		try {// Un nouveau serveur avec comme parametre le port donne lors de la
 				// commande.
 			serverSocket = new ServerSocket(Integer.parseInt(args[0]));
 			Server server = new Server(serverSocket);
-			ArrayList<Integer> cache = new ArrayList<Integer>();
+			int[] cache = new int[999999999];
 			while (true) {// On accepte tous les clients, et on fait un nouveau
 							// thread a chaque fois.
 				Socket socketClient = serverSocket.accept();

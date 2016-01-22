@@ -1,14 +1,15 @@
-import java.lang.*;
-import java.io.*;
-import java.net.*;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.net.InetAddress;
+import java.net.Socket;
 import java.util.Scanner;
 
 class Client {
 	
 	
 	private int result;
-	private int localport = 50000;
-	@SuppressWarnings("unused")
+	private int localport;
 	private int compteur;
 	/**
 	 * Constructeur du client.
@@ -27,16 +28,6 @@ class Client {
 		
 		}
 
-	public void setResult(int x) {
-	// TODO Auto-generated method stub
-		this.result = x;
-	}
-
-	public int getResult() {
-		// TODO Auto-generated method stub
-		return this.result;
-	}
-
 	public static void main(String[] args) throws IOException {// On recupere les arguments de la
 		// console pour creer le client, on
 		// le lance puis on affiche le
@@ -52,7 +43,7 @@ class Client {
 				 InetAddress address = InetAddress.getLocalHost();
 				Socket clientSocket = new Socket(address, this.localport);
 				PrintStream output = new PrintStream(clientSocket.getOutputStream());
-				String text = Integer.toString(this.result);
+				String text = Integer.toString(this.compteur);
 				Scanner sc = new Scanner(clientSocket.getInputStream());
 				PrintWriter printWrite= new PrintWriter(output);
 				printWrite.println(text);
@@ -67,5 +58,16 @@ class Client {
 				e.printStackTrace();
 			}
 	}
+	
+	public void setResult(int x) {
+		// TODO Auto-generated method stub
+			this.result = x;
+		}
+
+		public int getResult() {
+			// TODO Auto-generated method stub
+			return this.result;
+		}
    	}
+
 //}
