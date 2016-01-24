@@ -23,6 +23,7 @@ public class ServerFibonacci {
 	 */
 	ServerFibonacci(ServerSocket serverSocket) {
 		this.serverSocket1 = serverSocket;
+		this.serverSocket2 = serverSocket;
 	}
 
 	
