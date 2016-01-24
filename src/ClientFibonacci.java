@@ -20,7 +20,7 @@ public class ClientFibonacci {
 	 * 
 	 * @param x
 	 *            le compteur nous permettra de savoir si la valeur est dans le cache sinon de la calculer
-	 * @param port
+	 * @param localport
 	 *            le port ou on envoi et ou arrivent les informations.
 	 */
 	ClientFibonacci(int x, int localport1) {

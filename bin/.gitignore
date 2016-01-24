@@ -4,3 +4,11 @@
 /client2.class
 /Server$ClientThread.class
 /tuples.class
+/ClientFibonacci.class
+/ServerFibonacci$ClientThread.class
+/ServerFibonacci.class
+/ClientYves.class
+/ServerYves.class
+/ServerFacto$ClientThread.class
+/ServerFacto.class
+/ServerYves$ClientThread.class

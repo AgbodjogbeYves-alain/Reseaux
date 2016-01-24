@@ -59,13 +59,12 @@ public class ServerFibonacci {
 		public void run() {
 			Scanner sc = new Scanner(inputStream);
 			String text = "";
-			if (sc.hasNext()) { // s'il y a un suivant
+			if (sc.hasNext()) {
 				text = sc.nextLine(); 
 			}
 			int compteur = Integer.parseInt(text);
 			PrintWriter printWrite = new PrintWriter(outputStream);
-			if (compteur == 0 || compteur == 1) { // Si on arrive a zero ou un, on renvoie le
-									// resultat.
+			if (compteur == 0 || compteur == 1) { 
 				printWrite.println(compteur);
 			} else {
 				if (cache[compteur] == 0) {
@@ -105,8 +104,7 @@ public class ServerFibonacci {
 			serverSocket = new ServerSocket(Integer.parseInt(args[0]));
 			ServerFibonacci server = new ServerFibonacci(serverSocket);
 			int[] cache = new int[99999999];
-			while (true) {// On accepte tous les clients, et on fait un nouveau
-							// thread a chaque fois.
+			while (true) {
 				Socket socketClient = serverSocket.accept();
 				ClientThread clientThread = server.new ClientThread(socketClient, cache);
 				clientThread.start();

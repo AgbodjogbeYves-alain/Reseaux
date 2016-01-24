@@ -12,13 +12,12 @@ class Client {
 	private int localport;
 	private int compteur;
 	/**
-	 * Constructeur du client.
+	 * Constructeur du clientfactorielle.
 	 * 
-	 * @param i
-	 *            l'increment, pour savoir ou on en est et de quel nombre on
-	 *            veut la factorielle.
-	 * @param port
-	 *            le port ou on veut envoyer les informations.
+	 * @param x
+	 *            le compteur nous permettra de savoir si la valeur est dans le cache sinon de la calculer
+	 * @param localport
+	 *            le port ou on envoi et ou arrivent les informations.
 	 */
    
 	public Client(int x, int localPort) {
@@ -28,6 +27,10 @@ class Client {
 		
 		}
 
+	/**
+	 * Le port et le nombre pour le calcul devront etre entré en console
+	 * @param args
+	 */
 	public static void main(String[] args) throws IOException {// On recupere les arguments de la
 		// console pour creer le client, on
 		// le lance puis on affiche le
@@ -37,6 +40,10 @@ class Client {
 		client.clientRun();
 		System.out.println(client.getResult());
 	}
+	
+	/**
+	 * Le clientrun sert a traiter la demande de calcul pour factorielle. Il fait une demande de calcul au serveur  .
+	 */
 	public void clientRun() {
 		// TODO Auto-generated method stub
 			try {
@@ -59,6 +66,11 @@ class Client {
 			}
 	}
 	
+	/** 
+	 * Les getteurs et setteurs servent à modifier le resultat ou a le recuperer
+	 * 
+	 * @return
+	 */
 	public void setResult(int x) {
 		// TODO Auto-generated method stub
 			this.result = x;

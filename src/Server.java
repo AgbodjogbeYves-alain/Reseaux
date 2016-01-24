@@ -11,29 +11,23 @@ import java.util.List;
 import java.util.Scanner;
 
 /**
- * Classe du serveur, pour gerer les clients et pouvoir creer d'autres clients.
- * 
- * @return les resultats aux clients qui demandent une factorielle, avec un
- *         cache prevu.
- * 
+ * Le serveur va servir a creer les clients de calcul et renvoyer le resultat au client qui a demandé le calcul
+ * Une des consigne etaient de creer un cache
  */
 public class Server {
 	private ServerSocket serverSocket;
 
 	/**
-	 * Constructeur du serveur
+	 * Constructeur de la classe serveurFibonacci
 	 * 
 	 * @param serverSocket
-	 *            le socket du serveur.
+	 *   
 	 */
 	Server(ServerSocket serverSocket) {
 		this.serverSocket = serverSocket;
 	}
 
-	/**
-	 * Classe du client en thread, utilise de façon recursive.
-	 *
-	 */
+	
 	public class ClientThread extends Thread {
 		private Socket socketClientThread;
 		private InputStream inputStream;
@@ -43,13 +37,12 @@ public class Server {
 		
 		
 		/**
-		 * Constructeur du clientThread
+		 * Constructeur de la classe clientThread
 		 * 
 		 * @param socket
 		 *            le socket du serveur, recupere pour aller le retourner.
-		 * @param Resultats
-		 *            la Hashtable pour rentrer les résultats au fur et a
-		 *            mesure.
+		 * @param cache1
+		 *            Le tableau qui contient les valeurs deja calculée et qui contiendras les futures valeurs
 		 */
 		ClientThread(Socket skt, int[] cache2) {
 			try {
@@ -62,39 +55,49 @@ public class Server {
 		}
 
 		/**
-		 * Run du client thread, permet de recevoir l'etape correspondante et
-		 * demander au serveur le resultat suivant.
+		 * Dans le run on va verifier si le resultat est dans le cache, si le chiffre entré est superieur a 0 
+		 * Si il n'est pas dans le cache on creer 2 nouveaux clients pour le calcul recursif.
+		 * Si il est dans le cache on renvoie la valeur indexée a l'indice [compteur].
 		 */
 		@Override
 		public void run() {
 			Scanner sc = new Scanner(inputStream);
 			String text = "bonjour";
-			if (sc.hasNext()) { // s'il y a un suivant
+			if (sc.hasNext()) { 
 				text = sc.nextLine();
 			}
+			
 			int compteur = Integer.parseInt(text);
 			PrintWriter printWrite = new PrintWriter(outputStream);
-			if (compteur == 0) { // Si on arrive a zero, on renvoie le
-									// resultat.
+			if (compteur == 0) { 
 				printWrite.println(1);
-			} else {	
-					if (cache[compteur] == 0)
+			} 
+			
+			else
+				{if(compteur < 0) 
+					{printWrite.println("Entier negatif : entrez un entier valide");}
+				
+				else {	
+					if (compteur >= 0)
 					{
-						Client client = new Client(compteur - 1, serverSocket.getLocalPort());
-						client.clientRun();
-						int result = client.getResult();
-						client.setResult(result * compteur);
-						cache[compteur-1] = result ;
-						printWrite.println(result * compteur);
-					} else {// On renvoie le resultat stocke si ce n'est pas le cas.
-						//printWrite.println(cache.get(compteur));
+						if (cache[compteur]==0)
+						{
+							Client client = new Client(compteur - 1, serverSocket.getLocalPort());
+							client.clientRun();
+							int result = client.getResult();
+							client.setResult(result * compteur);
+							cache[compteur-1] = result ;
+							printWrite.println(result * compteur);
+						} else {
 						printWrite.println(cache[compteur]);
 						}
 					}
+				}
+				}
 			printWrite.flush();
 			try {
 				this.socketClientThread.close();
-				sc.close();// On le ferme une fois fini.
+				sc.close();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -104,13 +107,11 @@ public class Server {
 
 	public static void main(String[] args) {
 		ServerSocket serverSocket = null;
-		try {// Un nouveau serveur avec comme parametre le port donne lors de la
-				// commande.
+		try {
 			serverSocket = new ServerSocket(Integer.parseInt(args[0]));
 			Server server = new Server(serverSocket);
-			int[] cache = new int[999999999];
-			while (true) {// On accepte tous les clients, et on fait un nouveau
-							// thread a chaque fois.
+			int[] cache = new int[9999999];
+			while (true) {
 				Socket socketClient = serverSocket.accept();
 				ClientThread clientThread = server.new ClientThread(socketClient, cache);
 				clientThread.start();
