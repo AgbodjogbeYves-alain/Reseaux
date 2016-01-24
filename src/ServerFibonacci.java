@@ -4,103 +4,93 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Hashtable;
 import java.util.Scanner;
 
 /**
- * Classe du serveur, pour gerer les clients et pouvoir creer d'autres clients.
- * 
- * @return les resultats aux clients qui demandent une factorielle, avec un
- *         cache prevu.
- * 
+ * Le serveur va servir a creerr les clients de calcul et renvoyer le resultat au client qui a demandé le calcul
+ * Une des consigne etaient de creer 2 serveurs
  */
+
 public class ServerFibonacci {
 	private ServerSocket serverSocket1;
 	private ServerSocket serverSocket2;
 
 	/**
-	 * Constructeur du serveur
+	 * Constructeur de la classe serveurFibonacci
 	 * 
 	 * @param serverSocket
-	 *            le socket du serveur.
+	 *   
 	 */
 	ServerFibonacci(ServerSocket serverSocket) {
-		this.serverSocket = serverSocket;
+		this.serverSocket1 = serverSocket;
 	}
 
-	/**
-	 * Classe du client en thread, utilise de façon recursive.
-	 *
-	 */
+	
 	public class ClientThread extends Thread {
 		private Socket socket;
-		private InputStream input;
-		private OutputStream output;
-		private Hashtable<Integer, Integer> resultats;
+		private InputStream inputStream;
+		private OutputStream outputStream;
+		private int[] cache;
 
 		/**
-		 * Constructeur du clientThread
+		 * Constructeur de la classe clientThread
 		 * 
 		 * @param socket
 		 *            le socket du serveur, recupere pour aller le retourner.
-		 * @param Resultats
-		 *            la Hashtable pour rentrer les résultats au fur et a
-		 *            mesure.
+		 * @param cache1
+		 *            Le tableau qui contient les valeurs deja calculée et qui contiendras les futures valeurs
 		 */
-		ClientThread(Socket socket, Hashtable<Integer, Integer> Resultats) {
+		ClientThread(Socket socket, int[] cache1) {
 			try {
 				this.socket = socket;
-				output = socket.getOutputStream();
-				input = socket.getInputStream();
-				resultats = Resultats;
+				outputStream = socket.getOutputStream();
+				inputStream = socket.getInputStream();
+				cache = cache1;
 			} catch (Exception e) {
 			}
 		}
 
 		/**
-		 * Run du client thread, permet de recevoir l'etape correspondante et
-		 * demander au serveur le resultat suivant.
+		 * Dans le run on va verifier si le resultat est dans le cache, si le chiffre entré est superieur a 0 
+		 * Si il n'est pas dans le cache on creer 2 nouveaux clients pour le calcul recursif.
+		 * Si il est dans le cache on renvoie la valeur indexée a l'indice [compteur].
 		 */
 		@Override
 		public void run() {
-			Scanner sc = new Scanner(input);
+			Scanner sc = new Scanner(inputStream);
 			String text = "";
 			if (sc.hasNext()) { // s'il y a un suivant
 				text = sc.nextLine(); 
 			}
-			int N = Integer.parseInt(text);
-			PrintWriter pw = new PrintWriter(output);
-			if (N == 0 || N == 1) { // Si on arrive a zero ou un, on renvoie le
+			int compteur = Integer.parseInt(text);
+			PrintWriter printWrite = new PrintWriter(outputStream);
+			if (compteur == 0 || compteur == 1) { // Si on arrive a zero ou un, on renvoie le
 									// resultat.
-				pw.println(N);
+				printWrite.println(compteur);
 			} else {
-				if (resultats.get(N) == null) {// On verifie si le
-														// resultat est absent
-														// des resultats deja
-														// presents. Si oui, on
-														// le calcule.
-					ClientFibonacci client1 = new ClientFibonacci(N - 1, serverSocket1.getLocalPort());
-					ClientFibonacci client2 = new ClientFibonacci(N - 2, serverSocket2.getLocalPort());
+				if (cache[compteur] == 0) {
+					ClientFibonacci client1 = new ClientFibonacci(compteur - 1, serverSocket1.getLocalPort());
+					ClientFibonacci client2 = new ClientFibonacci(compteur - 2, serverSocket2.getLocalPort());
 					client1.clientRun();
 					client2.clientRun();
-					int answer1 = client1.getAnswer();
-					int answer2 = client2.getAnswer();
-					client1.setAnswer(answer1);
-					client2.setAnswer(answer2);
-					resultats.put(N - 1, answer1);
-					resultats.put(N - 2, answer2);
+					int result1 = client1.getResult();
+					int result2 = client2.getResult();
+					client1.setResult(result1);
+					client2.setResult(result2);
+					cache[compteur - 1] = result1;
+					cache[compteur - 2] = result2;
 					
-					pw.println(answer1 + answer2);
+					printWrite.println(result1 + result2); // On additionne les 2 resultats
 					
-				} else {// On renvoie le resultat stocke si ce n'est pas le cas.
-					pw.println(resultats.get(N));
+				} else {
+					printWrite.println(cache[compteur]);
 				}
 
 			}
-			pw.flush();
+			printWrite.flush();// Sert a vider
 			try {
 				this.socket.close();
-				sc.close();// On le ferme une fois fini.
+				sc.close();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -108,18 +98,17 @@ public class ServerFibonacci {
 
 	}
 
+	// Le port devra etre entré en parametre dans la console
 	public static void main(String[] args) {
 		ServerSocket serverSocket = null;
-		try {// Un nouveau serveur avec comme parametre le port donne lors de la
-				// commande.
+		try {
 			serverSocket = new ServerSocket(Integer.parseInt(args[0]));
-			ServerFacto server = new ServerFacto(serverSocket);
-			Hashtable<Integer, Integer> resultats = new Hashtable<Integer, Integer>();
-
+			ServerFibonacci server = new ServerFibonacci(serverSocket);
+			int[] cache = new int[99999999];
 			while (true) {// On accepte tous les clients, et on fait un nouveau
 							// thread a chaque fois.
 				Socket socketClient = serverSocket.accept();
-				ClientThread clientThread = server.new ClientThread(socketClient, resultats);
+				ClientThread clientThread = server.new ClientThread(socketClient, cache);
 				clientThread.start();
 			}
 		} catch (IOException e) {

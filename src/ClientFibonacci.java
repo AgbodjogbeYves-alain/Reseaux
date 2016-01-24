@@ -6,7 +6,7 @@ import java.net.Socket;
 import java.util.Scanner;
 
 /**
- * Classe client, pour demander un factoriel, et avoir le résultat.
+ * Classe client, pour demander un calcul fibonnacci, et avoir le résultat.
  *
  */
 public class ClientFibonacci {
@@ -30,7 +30,7 @@ public class ClientFibonacci {
 	}
 	
 	/**
-	 * Le port devra etre entré en console
+	 * Le port et le nombre pour le calcul devront etre entré en console
 	 * @param args
 	 */
 	public static void main(String[] args) {
