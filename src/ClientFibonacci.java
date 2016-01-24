@@ -10,56 +10,56 @@ import java.util.Scanner;
  *
  */
 public class ClientFibonacci {
-	private int N;
-	private int answer;
-	private int port;
+	private int compteur;
+	private int result;
+	private int localport;
 
 
 	/**
-	 * Constructeur du client.
+	 * Constructeur de la classe client client.
 	 * 
-	 * @param i
-	 *            l'increment N, pour savoir ou on en est et de quel nombre on
-	 *            veut la factorielle.
+	 * @param x
+	 *            le compteur nous permettra de savoir si la valeur est dans le cache sinon de la calculer
 	 * @param port
-	 *            le port ou on veut envoyer les informations.
+	 *            le port ou on envoi et ou arrivent les informations.
 	 */
-	ClientFibo(int i, int port1) {
-		this.N = i;
-		this.answer = 1;
-		this.port = port;
+	ClientFibonacci(int x, int localport1) {
+		this.compteur = x;
+		this.result = 1;
+		this.localport = localport1;
 	}
-
-	public static void main(String[] args) {// On recupere les arguments de la
-											// console pour creer le client, on
-											// le lance puis on affiche le
-											// resultat.
+	
+	/**
+	 * Le port devra etre entré en console
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		
 		ClientFibonacci client = new ClientFibonacci(Integer.parseInt(args[0]), Integer.parseInt(args[1]));
 		client.clientRun();
-		System.out.println(client.getAnswer());
+		System.out.println(client.getResult());
 	}
 
 	/**
-	 * Ici on envoie au serveur la requete, et on envoie notre demande vis a vis
-	 * de la factorielle. On voudra avoir le resultat.
+	 * Le run sert a traiter la demande de calcul pour fibonacci. Il fait une demande de calcul au serveur  .
 	 */
 	public void clientRun() {
 		try {
-			Socket clientSocket = new Socket(InetAddress.getLocalHost(), this.port);
+			Socket clientSocket = new Socket(InetAddress.getLocalHost(), this.localport);
 			
 			PrintStream output = new PrintStream(clientSocket.getOutputStream());
 			
 			
-			String text = Integer.toString(this.N);
+			String text = Integer.toString(this.compteur);
 			
 			Scanner sc = new Scanner(clientSocket.getInputStream());
 			
-			PrintWriter pw = new PrintWriter(output);
-			pw.println(text);
-			pw.flush();// Nécessaire pour le bon fonctionnement.
+			PrintWriter printWriter = new PrintWriter(output);
+			printWriter.println(text);
+			printWriter.flush();
 			if (sc.hasNext()) {
 				String texte = sc.nextLine();
-				this.answer = Integer.parseInt(texte);
+				this.result = Integer.parseInt(texte);
 			}
 			clientSocket.close();
 			sc.close();
@@ -67,18 +67,18 @@ public class ClientFibonacci {
 			e.printStackTrace();
 		}
 	}
-/**
- * getter de la reponse.
- * @return la reponse
- */
-	public int getAnswer() {
-		return this.answer;
+	
+	/** 
+	 * Les getteurs et setteurs servent à modifier le resultat ou a le recuperer
+	 * 
+	 * @return
+	 */
+	
+	public int getResult() {
+		return this.result;
 	}
-/**
- * setter de la reponse.
- * @param i la nouvelle reponse.
- */
-	public void setAnswer(int i) {
-		this.answer = i;
+
+	public void setResult(int x) {
+		this.result = x;
 	}
 }
