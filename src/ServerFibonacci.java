@@ -65,38 +65,45 @@ public class ServerFibonacci {
 			}
 			int compteur = Integer.parseInt(text);
 			PrintWriter printWrite = new PrintWriter(outputStream);
-			if (compteur == 0 || compteur == 1) { 
-				printWrite.println(compteur);
-			} else {
-				if (cache[compteur] == 0) {
-					ClientFibonacci client1 = new ClientFibonacci(compteur - 1, serverSocket1.getLocalPort());
-					ClientFibonacci client2 = new ClientFibonacci(compteur - 2, serverSocket2.getLocalPort());
-					client1.clientRun();
-					client2.clientRun();
-					int result1 = client1.getResult();
-					int result2 = client2.getResult();
-					client1.setResult(result1);
-					client2.setResult(result2);
-					cache[compteur - 1] = result1;
-					cache[compteur - 2] = result2;
-					
-					printWrite.println(result1 + result2); // On additionne les 2 resultats
-					
+			if (compteur>=0)
+			{
+				if (compteur == 0 || compteur == 1) { 
+					printWrite.println(compteur);
 				} else {
-					printWrite.println(cache[compteur]);
+					if (cache[compteur] == 0) {
+						ClientFibonacci client1 = new ClientFibonacci(compteur - 1, serverSocket1.getLocalPort());
+						ClientFibonacci client2 = new ClientFibonacci(compteur - 2, serverSocket2.getLocalPort());
+						client1.clientRun();
+						client2.clientRun();
+						int result1 = client1.getResult();
+						int result2 = client2.getResult();
+						client1.setResult(result1);
+						client2.setResult(result2);
+						cache[compteur - 1] = result1;
+						cache[compteur - 2] = result2;
+					
+						printWrite.println(result1 + result2); // On additionne les 2 resultats
+					
+					} else {
+						printWrite.println(cache[compteur]);
+					}
+				}
+				}
+				else{
+					printWrite.println("Entier negatif : entrez un entier valide");
 				}
 
+				
+				printWrite.flush();// Sert a vider
+				try {
+					this.socket.close();
+					sc.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
-			printWrite.flush();// Sert a vider
-			try {
-				this.socket.close();
-				sc.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
 
-	}
+		}
 
 	// Le port devra etre entré en parametre dans la console
 	public static void main(String[] args) {
